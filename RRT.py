@@ -76,7 +76,9 @@ class RRTAlgorithm():
             testPoint[0] = locationStart.locationX + i*u_hat[0]
             testPoint[1] = locationStart.locationY + i*u_hat[1]
             # check if testPoint lies within obstacle
-            if self.grid[round(testPoint[1]).astype(np.int64), round(testPoint[0]).astype(np.int64)] == 1:
+            # if self.grid[round(testPoint[1]).astype(np.int64), round(testPoint[0]).astype(np.int64)] == 1:
+            #     return True
+            if self.grid[round(testPoint[1]), round(testPoint[0])] == 1:
                 return True
         return False
 
@@ -99,9 +101,8 @@ class RRTAlgorithm():
         for child in root.children:
             self.findNearest(child, point)
 
-        pass
-
     # find euclidean distance between a node and an XY point
+
     def distance(self, node1, point):
         dist = np.sqrt(
             (node1.locationX - point[0])**2 + (node1.locationY - point[1])**2)
@@ -111,9 +112,9 @@ class RRTAlgorithm():
     def goalFound(self, point):
         if self.distance(self.goal, point) <= self.rho:
             return True
-        pass
 
     # reset nearestNode and nearest Distance
+
     def resetNearestValues(self):
         self.nearestNode = None
         self.nearestDist = 10000
@@ -146,7 +147,6 @@ ax = fig.gca()
 ax.add_patch(goalRegion)
 plt.xlabel('X-axis $(m)$')
 plt.ylabel('Y-axis $(m)$')
-plt.show()
 
 # Code
 rrt = RRTAlgorithm(start, goal, numIterations, grid, stepSize)
