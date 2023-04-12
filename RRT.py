@@ -4,13 +4,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
 
-# Settings of Python plots
-from matplotlib.pyplot import rcParams
-np.set_printoptions(precision=3, suppress=True)
-rcParams['font.family'] = 'sans-serif'
-rcParams['font.sans-serif'] = ['Tahoma']
-plt.rcParams['font.size'] = 22
-
 # treeNode class
 
 
@@ -30,7 +23,7 @@ class RRTAlgorithm():
         self.goal = treeNode(goal[0], goal[1])         # goal position
         self.nearestNode = None  # nearest node
         # number of iterations to run
-        self.iterations = min(numIterations, 200)
+        self.iterations = numIterations
         self.grid = grid  # the map
         self.rho = stepSize  # length of each branch
         self.path_distance = 0  # total path distance
@@ -66,19 +59,24 @@ class RRTAlgorithm():
             point[0] = grid.shape[1] - 1
         if point[1] >= grid.shape[0]:
             point[1] = grid.shape[0] - 1
+        if point[0] < 0:
+            point[0] = 0
+        if point[1] < 0:
+            point[1] = 0
         return point
 
     # check if obstacle lies between the start and end point of the edge
     def isInObstacle(self, locationStart, locationEnd):
         u_hat = self.unitVector(locationStart, locationEnd)
         testPoint = np.array([0.0, 0.0])
+        print(locationStart.locationX, locationStart.locationY, locationEnd)
         for i in range(self.rho):
             testPoint[0] = locationStart.locationX + i*u_hat[0]
             testPoint[1] = locationStart.locationY + i*u_hat[1]
-            # check if testPoint lies within obstacle
-            # if self.grid[round(testPoint[1]).astype(np.int64), round(testPoint[0]).astype(np.int64)] == 1:
-            #     return True
-            if self.grid[round(testPoint[1]), round(testPoint[0])] == 1:
+            y = np.round(testPoint[1]).astype(np.int64)
+            x = np.round(testPoint[0]).astype(np.int64)
+            print(y, x)
+            if y < 0 or x < 0 or y >= self.grid.shape[0] or x >= self.grid.shape[1] or self.grid[y, x] == 1:
                 return True
         return False
 
@@ -102,7 +100,6 @@ class RRTAlgorithm():
             self.findNearest(child, point)
 
     # find euclidean distance between a node and an XY point
-
     def distance(self, node1, point):
         dist = np.sqrt(
             (node1.locationX - point[0])**2 + (node1.locationY - point[1])**2)
@@ -114,7 +111,6 @@ class RRTAlgorithm():
             return True
 
     # reset nearestNode and nearest Distance
-
     def resetNearestValues(self):
         self.nearestNode = None
         self.nearestDist = 10000
@@ -133,12 +129,13 @@ class RRTAlgorithm():
 # Load the grid, set start and goal <x, y> positions, number of iterations, step size
 grid = np.load('cspace.npy')
 start = np.array([100.0, 100.0])
-goal = np.array([700.0, 250.0])
-numIterations = 200
+goal = np.array([800.0, 250.0])
+numIterations = 400
 stepSize = 50
 goalRegion = patches.Circle(
     (goal[0], goal[1]), stepSize, color='b', fill=False)
 
+print(grid.shape)
 fig = plt.figure("RRT Algorithm")
 plt.imshow(grid, cmap='binary')
 plt.plot(start[0], start[1], 'ro')
@@ -164,11 +161,11 @@ for i in range(rrt.iterations):
         rrt.addChild(new[0], new[1])
         plt.pause(0.10)
         plt.plot([rrt.nearestNode.locationX, new[0]], [
-                 rrt.nearestNode.locationY, new[1]], 'go', linestyle='--')
+                 rrt.nearestNode.locationY, new[1]], 'go', linestyle='-')
         # if goal found, append the path
         if (rrt.goalFound(new)):
             rrt.addChild(goal[0], goal[1])
-            print("Goal Found!")
+            print("\nGoal Found!")
             break
 
 # trace back path returned, and add start to waypoints
@@ -182,5 +179,7 @@ print("Waypoints: ", rrt.Waypoints)
 # plot the waypoints
 for i in range(len(rrt.Waypoints)-1):
     plt.plot([rrt.Waypoints[i][0], rrt.Waypoints[i+1][0]],
-             [rrt.Waypoints[i][1], rrt.Waypoints[i+1][1]], 'ro', linestyle='--')
+             [rrt.Waypoints[i][1], rrt.Waypoints[i+1][1]], 'ro', linestyle='-')
     plt.pause(0.10)
+
+plt.pause(1.0)
