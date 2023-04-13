@@ -94,13 +94,13 @@ class RRTAlgorithm():
     def isInObstacle(self, locationStart, locationEnd):
         u_hat = self.unitVector(locationStart, locationEnd)
         testPoint = np.array([0.0, 0.0])
-        print(locationStart.locationX, locationStart.locationY, locationEnd)
+        # print(locationStart.locationX, locationStart.locationY, locationEnd)
         for i in range(self.rho):
             testPoint[0] = locationStart.locationX + i*u_hat[0]
             testPoint[1] = locationStart.locationY + i*u_hat[1]
             y = np.round(testPoint[1]).astype(np.int64)
             x = np.round(testPoint[0]).astype(np.int64)
-            print(y, x)
+            # print(y, x)
             if y < 0 or x < 0 or y >= self.grid.shape[0] or x >= self.grid.shape[1] or self.grid[y, x] == 1:
                 return True
         return False
@@ -157,7 +157,7 @@ class RRTAlgorithm():
 
 
 # Load the grid, set start and goal <x, y> positions, number of iterations, step size
-grid = np.load('cspace.npy')
+grid = np.load('map0.npy')
 start = np.array([100.0, 100.0])
 goal = np.array([600.0, 250.0])
 numIterations = 400
