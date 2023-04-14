@@ -162,7 +162,7 @@ class RRTStarAlgorithm():
 
 
 # Load the grid, set start and goal <x, y> positions, number of iterations, step size
-grid = np.load('map0.npy')
+grid = np.load('map1.npy')
 print("Dimensions of the grid: ", grid.shape)
 fig = plt.figure("RRT Algorithm")
 plt.imshow(grid, cmap='gray')
