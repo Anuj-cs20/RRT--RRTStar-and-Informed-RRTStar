@@ -4,9 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
 
+
 # treeNode class
-
-
 class treeNode:
     def __init__(self, locationX, locationY):
         self.locationX = locationX          # X Location
@@ -17,13 +16,11 @@ class treeNode:
 
 # RRT Algorithm class
 class RRTAlgorithm():
-    def __init__(self, start, goal, numIterations, grid, stepSize):
+    def __init__(self, start, goal, grid, stepSize):
         # The RRT (root position)
         self.randomTree = treeNode(start[0], start[1])
         self.goal = treeNode(goal[0], goal[1])         # goal position
         self.nearestNode = None  # nearest node
-        # number of iterations to run
-        self.iterations = numIterations
         self.grid = grid  # the map
         self.rho = stepSize  # length of each branch
         self.path_distance = 0  # total path distance
@@ -69,14 +66,14 @@ class RRTAlgorithm():
     def isInObstacle(self, locationStart, locationEnd):
         u_hat = self.unitVector(locationStart, locationEnd)
         testPoint = np.array([0.0, 0.0])
-        print(locationStart.locationX, locationStart.locationY, locationEnd)
+       
         for i in range(self.rho):
             testPoint[0] = locationStart.locationX + i*u_hat[0]
             testPoint[1] = locationStart.locationY + i*u_hat[1]
+            
             y = np.round(testPoint[1]).astype(np.int64)
             x = np.round(testPoint[0]).astype(np.int64)
-            print(y, x)
-            if y < 0 or x < 0 or y >= self.grid.shape[0] or x >= self.grid.shape[1] or self.grid[y, x] == 1:
+            if y < 0 or x < 0 or y >= self.grid.shape[0] or x >= self.grid.shape[1] or self.grid[y, x] == 0:
                 return True
         return False
 
@@ -127,50 +124,71 @@ class RRTAlgorithm():
 
 
 # Load the grid, set start and goal <x, y> positions, number of iterations, step size
-grid = np.load('cspace.npy')
-start = np.array([100.0, 100.0])
-goal = np.array([800.0, 250.0])
-numIterations = 400
-stepSize = 50
-goalRegion = patches.Circle(
-    (goal[0], goal[1]), stepSize, color='b', fill=False)
-
-print(grid.shape)
+grid = np.load('map1.npy')
+print("Dimensions of the grid: ", grid.shape)
 fig = plt.figure("RRT Algorithm")
-plt.imshow(grid, cmap='binary')
-plt.plot(start[0], start[1], 'ro')
-plt.plot(goal[0], goal[1], 'bo')
-ax = fig.gca()
-ax.add_patch(goalRegion)
+plt.imshow(grid, cmap='gray')
 plt.xlabel('X-axis $(m)$')
 plt.ylabel('Y-axis $(m)$')
+# plt.show()
 
+# x, y = map(int, input("Enter Start point coordinates: ").split())
+start = np.array([25.0, 300.0])
+plt.plot(start[0], start[1], 'ro')
+
+# [370.0, 125.0]
+# x, y = map(int, input("Enter End point coordinates: ").split())
+goal = np.array([370.0, 125.0])
+plt.plot(goal[0], goal[1], 'bo')
+
+# 20
+# stepSize = int(input("Enter step size: "))
+stepSize = 20
+goalRegion = patches.Circle(
+    (goal[0], goal[1]), stepSize, color='b', fill=False)
+ax = fig.gca()
+ax.add_patch(goalRegion)
+
+# plt.show()
 # Code
-rrt = RRTAlgorithm(start, goal, numIterations, grid, stepSize)
-
-for i in range(rrt.iterations):
-    # Reset nearest values
-    rrt.resetNearestValues()
-    print("Iteration: ", i)
-    # algo begins
-    point = rrt.sampleAPoint()
-    rrt.findNearest(rrt.randomTree, point)
-    new = rrt.steerToPoint(rrt.nearestNode, point)
-    bool = rrt.isInObstacle(rrt.nearestNode, new)
-    if (bool == False):
-        rrt.addChild(new[0], new[1])
-        plt.pause(0.10)
-        plt.plot([rrt.nearestNode.locationX, new[0]], [
-                 rrt.nearestNode.locationY, new[1]], 'go', linestyle='-')
-        # if goal found, append the path
-        if (rrt.goalFound(new)):
-            rrt.addChild(goal[0], goal[1])
-            print("\nGoal Found!")
-            break
+rrt = RRTAlgorithm(start, goal, grid, stepSize)
+totalNodes = 0
+totalIterations = 0
+while (1):
+    n = int(input("Number of nodes to be added: "))
+    if n == 0:
+        break
+    else:
+        i = n
+        while (i):
+            totalIterations += 1
+            # Reset nearest values
+            rrt.resetNearestValues()
+            # algo begins
+            point = rrt.sampleAPoint()
+            rrt.findNearest(rrt.randomTree, point)
+            new = rrt.steerToPoint(rrt.nearestNode, point)
+            bool = rrt.isInObstacle(rrt.nearestNode, new)
+            i = i - 1
+            if (bool == False):
+                totalNodes += 1
+                rrt.addChild(new[0], new[1])
+                plt.pause(0.10)
+                plt.plot([rrt.nearestNode.locationX, new[0]], [
+                    rrt.nearestNode.locationY, new[1]], 'go', linestyle='-')
+                # if goal found, append the path
+                if (rrt.goalFound(new)):
+                    rrt.addChild(goal[0], goal[1])
+                    print("\nGoal Found!")
+                    break
+            else:
+                i = i + 1
 
 # trace back path returned, and add start to waypoints
 rrt.retraceRRTPath(rrt.goal)
 rrt.Waypoints.insert(0, start)
+print("Total Number of Nodes added: ", totalNodes)
+print("Total Number of Iterations: ", totalIterations)
 print("Number of waypoints: ", rrt.numWaypoints)
 print("Path Distance (m): ", rrt.path_distance)
 print("Waypoints: ", rrt.Waypoints)
@@ -182,4 +200,4 @@ for i in range(len(rrt.Waypoints)-1):
              [rrt.Waypoints[i][1], rrt.Waypoints[i+1][1]], 'ro', linestyle='-')
     plt.pause(0.10)
 
-plt.pause(1.0)
+plt.pause(1.50)

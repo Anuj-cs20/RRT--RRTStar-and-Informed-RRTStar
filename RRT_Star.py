@@ -1,12 +1,10 @@
- # Things to import
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
 
+
 # treeNode class
-
-
 class treeNode:
     def __init__(self, locationX, locationY):
         self.locationX = locationX          # X Location
@@ -31,7 +29,7 @@ class RRTAlgorithm():
         self.numWaypoints = 0  # number of waypoints
         self.Waypoints = []  # the waypoints
 
-    def cost(node,self):
+    def cost(node, self):
         if node.parent is None:
             return 0
         return node.parent.cost + self.distance(node, node.parent)
@@ -41,14 +39,16 @@ class RRTAlgorithm():
         tempNode = treeNode(locationX, locationY)
         self.findNearest(self.randomTree, tempNode)
         if not self.isInObstacle(self.nearestNode, tempNode):
-            costTemp = self.nearestNode.cost + self.distance(self.nearestNode, tempNode)
+            costTemp = self.nearestNode.cost + \
+                self.distance(self.nearestNode, tempNode)
             if costTemp < tempNode.cost:
                 tempNode.cost = costTemp
                 self.nearestNode.children.append(tempNode)
                 tempNode.parent = self.nearestNode
                 for sibling in self.nearestNode.children:
                     if sibling != tempNode and not self.isInObstacle(sibling, tempNode):
-                        costSib = self.nearestNode.cost + self.distance(self.nearestNode, sibling)
+                        costSib = self.nearestNode.cost + \
+                            self.distance(self.nearestNode, sibling)
                         if costSib < sibling.cost:
                             sibling.parent = tempNode
                             tempNode.children.append(sibling)
@@ -94,13 +94,13 @@ class RRTAlgorithm():
     def isInObstacle(self, locationStart, locationEnd):
         u_hat = self.unitVector(locationStart, locationEnd)
         testPoint = np.array([0.0, 0.0])
-        print(locationStart.locationX, locationStart.locationY, locationEnd)
+        # print(locationStart.locationX, locationStart.locationY, locationEnd)
         for i in range(self.rho):
             testPoint[0] = locationStart.locationX + i*u_hat[0]
             testPoint[1] = locationStart.locationY + i*u_hat[1]
             y = np.round(testPoint[1]).astype(np.int64)
             x = np.round(testPoint[0]).astype(np.int64)
-            print(y, x)
+            # print(y, x)
             if y < 0 or x < 0 or y >= self.grid.shape[0] or x >= self.grid.shape[1] or self.grid[y, x] == 1:
                 return True
         return False
@@ -123,8 +123,8 @@ class RRTAlgorithm():
         for child in root.children:
             self.findNearest(child, point)
 
-
     # find euclidean distance between a node and an XY point
+
     def distance(self, node1, point):
         dist = np.sqrt(
             (node1.locationX - point[0])**2 + (node1.locationY - point[1])**2)
@@ -144,8 +144,8 @@ class RRTAlgorithm():
             for child in self.randomTree.children:
                 self.resetNodeCost(child)
 
-
     # trace the path from goal to start
+
     def retraceRRTPath(self, goal):
         if goal.locationX == self.randomTree.locationX:
             return
@@ -157,7 +157,7 @@ class RRTAlgorithm():
 
 
 # Load the grid, set start and goal <x, y> positions, number of iterations, step size
-grid = np.load('cspace.npy')
+grid = np.load('map0.npy')
 start = np.array([100.0, 100.0])
 goal = np.array([600.0, 250.0])
 numIterations = 400
