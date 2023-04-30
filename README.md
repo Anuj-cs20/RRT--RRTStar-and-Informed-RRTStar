@@ -28,9 +28,9 @@ The RRT (Rapidly-Exploring Random Tree) algorithm is a motion planning algorithm
 It is particularly useful when the agent needs to navigate through cluttered environments with obstacles that have irregular shapes and configurations. It is generally used in Robot Path Planning, Autonomous vehicle navigation, Virtual environment exploration and Motion planning for unmanned aerial vehicles (UAVs).
 
 The RRT algorithm has several advantages over other motion planning algorithms, such as A*:
-● It can handle high-dimensional spaces: The RRT algorithm can be applied to spaces with high dimensions, such as robotic manipulator configuration spaces.
-● It is probabilistically complete: The RRT algorithm is guaranteed to find a solution if one exists, given enough time and resources.
-● Itcanhandlecomplexobstacleshapes:TheRRTalgorithmcanhandlecomplex obstacle shapes, as it generates random configurations and extends the tree toward them, which allows it to explore the search space more efficiently.
+* It can handle high-dimensional spaces: The RRT algorithm can be applied to spaces with high dimensions, such as robotic manipulator configuration spaces.
+* It is probabilistically complete: The RRT algorithm is guaranteed to find a solution if one exists, given enough time and resources.
+* Itcanhandlecomplexobstacleshapes:TheRRTalgorithmcanhandlecomplex obstacle shapes, as it generates random configurations and extends the tree toward them, which allows it to explore the search space more efficiently.
 
 To perform the RRT algorithm, you start with an initial configuration (e.g., the starting point of a robot) and randomly sample a new configuration in the space. The algorithm then attempts to connect the sampled configuration to the nearest configuration in the existing tree. If the connection is feasible (i.e., it does not collide with obstacles), the new configuration is added to the tree. This process is repeated until a desired goal configuration is reached or a certain number of iterations are completed. The resulting tree represents a connected roadmap of the configuration space, which can be used to find a collision-free path from the initial to the goal configuration.
 
@@ -135,16 +135,12 @@ https://user-images.githubusercontent.com/77829961/235368599-dffb84db-4fdf-48ba-
 Informed RRT* is an improvement over the classic RRT* algorithm, which is a popular path-planning algorithm used in robotics and autonomous systems. Informed RRT* improves the efficiency of RRT* by biasing the exploration towards the goal region, leading to faster convergence to a near-optimal solution. This is achieved by using heuristics or information about the goal region to guide the sampling and exploration process, resulting in fewer unnecessary samples and a more efficient search toward the goal.
 
 To perform Informed RRT*, the following steps are typically followed:
-● Define a heuristic function that estimates the cost from a given point to the goal region. This can be based on Euclidean distance, occupancy grid information, or any other domain-specific information.
-● Initialize the tree with the starting point as the root.
-● Sample a random point in the search space, biased towards the goal region
-based on the heuristic function.
-● Extend the tree towards the sampled point, considering collision checking to
-avoid obstacles.
-● Update the cost of the path from the root to the new node and rewire the tree to
-improve the path's quality.
-● Repeat the sampling, extension, and rewiring steps until the goal region is
-reached or a desired solution quality is achieved.
+* Define a heuristic function that estimates the cost from a given point to the goal region. This can be based on Euclidean distance, occupancy grid information, or any other domain-specific information.
+* Initialize the tree with the starting point as the root.
+* Sample a random point in the search space, biased towards the goal region based on the heuristic function.
+* Extend the tree towards the sampled point, considering collision checking to avoid obstacles.
+* Update the cost of the path from the root to the new node and rewire the tree to improve the path's quality.
+* Repeat the sampling, extension, and rewiring steps until the goal region is reached or a desired solution quality is achieved.
 
 <img width="477" alt="Screenshot 2023-04-30 at 11 29 40 PM" src="https://user-images.githubusercontent.com/77829961/235368847-ab711e16-bba4-4b2c-bb1a-b4af40b62a07.png">
 
@@ -184,7 +180,8 @@ update_heuristic(q, q_goal, T):
         update_heuristic(q_child, q_goal, T)
 ```        
 Informed RRT* has real-time applications in various fields, such as robotics, autonomous vehicles, and video games. For example:
-● Robotic path planning: Informed RRT* can be used in real-time to plan efficient and collision-free paths for autonomous robots, allowing them to navigate complex environments and avoid obstacles while converging towards a goal.
-● Autonomous vehicles: Informed RRT* can be used in real-time for trajectory planning and obstacle avoidance in self-driving cars, enabling them to plan safe and efficient routes on the fly while considering real-time sensor data.
-● Video games: Informed RRT* can be used in real-time for generating realistic and dynamic motion planning for virtual characters in video games, providing interactive and responsive navigation behavior for game agents.
+* Robotic path planning: Informed RRT* can be used in real-time to plan efficient and collision-free paths for autonomous robots, allowing them to navigate complex environments and avoid obstacles while converging towards a goal.
+* Autonomous vehicles: Informed RRT* can be used in real-time for trajectory planning and obstacle avoidance in self-driving cars, enabling them to plan safe and efficient routes on the fly while considering real-time sensor data.
+* Video games: Informed RRT* can be used in real-time for generating realistic and dynamic motion planning for virtual characters in video games, providing interactive and responsive navigation behavior for game agents.
+
 <img width="477" alt="Screenshot 2023-04-30 at 11 31 11 PM" src="https://user-images.githubusercontent.com/77829961/235368917-4d5f7568-8771-4573-9d92-2a721470a3e3.png">
